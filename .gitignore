@@ -1,0 +1,12 @@
+# OS / editor
+.DS_Store
+*.swp
+*.swo
+.idea/
+.vscode/
+
+# Python/Node
+__pycache__/
+node_modules/
+dist/
+build/
