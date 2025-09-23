@@ -1,0 +1,29 @@
+version: 0.2
+env:
+  variables:
+    ECR_REPO_NAME: ekscode
+    CLUSTER_NAME: <CLUSTER_NAME>
+    NAMESPACE: default
+phases:
+  install:
+    runtime-versions:
+      docker: 20
+    commands:
+      - curl -sL -o kubectl https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl
+      - chmod +x kubectl && mv kubectl /usr/local/bin/
+  pre_build:
+    commands:
+      - ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      - REPO_URI="$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$ECR_REPO_NAME"
+      - aws eks update-kubeconfig --name $CLUSTER_NAME --region $AWS_DEFAULT_REGION
+  build:
+    commands:
+      - sed -i "s|IMAGE_URI|$REPO_URI:latest|g" k8s/manifest.yaml
+  post_build:
+    commands:
+      - kubectl apply -f k8s/manifest.yaml -n $NAMESPACE
+      - kubectl rollout restart deployment/myapp -n $NAMESPACE || true
+      - kubectl rollout status deployment/myapp -n $NAMESPACE
+artifacts:
+  files:
+    - '**/*'
