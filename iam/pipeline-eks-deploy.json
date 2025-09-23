@@ -1,0 +1,36 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "EksDescribeCluster",
+      "Effect": "Allow",
+      "Action": ["eks:DescribeCluster"],
+      "Resource": "arn:aws:eks:*:111122223333:cluster/YOUR_CLUSTER_NAME"
+    },
+    {
+      "Sid": "Ec2NetworkingForManagedCompute",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateNetworkInterface",
+        "ec2:CreateNetworkInterfacePermission",
+        "ec2:DeleteNetworkInterface",
+        "ec2:DescribeDhcpOptions",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:DescribeSubnets",
+        "ec2:DescribeSecurityGroups",
+        "ec2:DescribeVpcs",
+        "ec2:DescribeRouteTables"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Sid": "LogsForPipeline",
+      "Effect": "Allow",
+      "Action": ["logs:CreateLogGroup","logs:CreateLogStream","logs:PutLogEvents"],
+      "Resource": [
+        "arn:aws:logs:*:111122223333:log-group:/aws/codepipeline/YOUR_PIPELINE_NAME",
+        "arn:aws:logs:*:111122223333:log-group:/aws/codepipeline/YOUR_PIPELINE_NAME:*"
+      ]
+    }
+  ]
+}
